@@ -6,12 +6,12 @@ import { Avatar, Button, Card, Title, Paragraph, Colors } from 'react-native-pap
 import Modal from "react-native-modal";
 
 
-const HomeScreen = () => {
+const CartScreen = () => {
   const navigation = useNavigation();
   let data = [
     { name: '01' },
-    { name: "02" },
-    { name: "03" },
+    // { name: "02" },
+    // { name: "03" },
     // {name: 04},
     // {name: 02},
     // {name: 04},
@@ -26,8 +26,8 @@ const HomeScreen = () => {
     setModalVisible(!isModalVisible);
   };
 
-  const handleSignOut = () => {
-    navigation.replace("Login")
+  const handleBack = () => {
+    navigation.pop()
     // auth
     //   .signOut()
     //   .then(() => {
@@ -40,14 +40,41 @@ const HomeScreen = () => {
     <>
       <SafeAreaView />
       <View style={styles.container}>
-        <View style={{ paddingBottom: 10 }}>
-          <Text style={{ fontSize: 25, fontWeight: 'bold' }}> Products </Text>
+        <View style={{ paddingBottom: 10,flexDirection: 'row', alignItems:'center', marginLeft:5, }}>
+        <TouchableOpacity onPress={() => handleBack()} style={{padding:10,}}>
+          <Image
+            source={require('../assets/back.png')}
+            style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              resizeMode: 'contain',
+              width: 15,
+              height: 15,
+            }}
+          />
+          </TouchableOpacity>
+          <View style={{flex:1}}>
+          <Text style={{ fontSize: 25, fontWeight: 'bold' }}> Cart </Text>
+          </View>
+          <TouchableOpacity onPress={() => handleBack()} style={{padding:10, backgroundColor:'#D35400', borderRadius:150/2, marginRight:5,}}>
+          <Image
+            source={require('../assets/wallet.png')}
+            style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              resizeMode: 'contain',
+              width: 30,
+              height: 30,
+            }}
+          />
+          </TouchableOpacity>
         </View>
+        <View style={{flex:1,height:'100%'}}>
         <FlatList
           data={data}
           numColumns={2}
           renderItem={({ item, index }) =>
-            <View style={{ width: '50%', padding: 5, }} key={index}>
+            <View style={{ width: '50%', padding: 5, }}>
               <Card style={{ backgroundColor: '#FFFFFF' }}>
                 <Card.Cover
                   source={require(`../assets/04.png`)}
@@ -60,20 +87,6 @@ const HomeScreen = () => {
                   <Text style={{ textAlign: 'justify', color: '#1C2833' }}>Lorem Ipsum is simply dummy text of the printing and typesetting industry...</Text>
                 </View>
                 <Card.Actions style={{ justifyContent: 'flex-end', }}>
-                  <TouchableOpacity onPress={handleSignOut}>
-                    <View style={{ marginRight: 5, backgroundColor: '#D35400', padding: 10, borderRadius: 150 / 2 }}>
-                      <Image
-                        source={require('../assets/bag.png')}
-                        style={{
-                          flexDirection: 'row',
-                          flexWrap: 'wrap',
-                          resizeMode: 'contain',
-                          width: 18,
-                          height: 18
-                        }}
-                      />
-                    </View>
-                  </TouchableOpacity>
                   <TouchableOpacity onPress={toggleModal}>
                     <View style={{ marginRight: 5, backgroundColor: '#D35400', padding: 10, borderRadius: 150 / 2 }}>
                       <Image
@@ -88,11 +101,27 @@ const HomeScreen = () => {
                       />
                     </View>
                   </TouchableOpacity>
+                  <TouchableOpacity onPress={() => {}}>
+                    <View style={{ marginRight: 5, backgroundColor: '#D35400', padding: 10, borderRadius: 150 / 2 }}>
+                      <Image
+                        source={require('../assets/garbage.png')}
+                        style={{
+                          flexDirection: 'row',
+                          flexWrap: 'wrap',
+                          resizeMode: 'contain',
+                          width: 18,
+                          height: 18
+                        }}
+                      />
+                    </View>
+                  </TouchableOpacity>
+
                 </Card.Actions>
               </Card>
             </View>
           }
         />
+        </View>
 
       </View>
       <Modal isVisible={isModalVisible} style={{ margin: 5 }}>
@@ -123,7 +152,7 @@ const HomeScreen = () => {
   )
 }
 
-export default HomeScreen
+export default CartScreen
 
 const styles = StyleSheet.create({
   container: {

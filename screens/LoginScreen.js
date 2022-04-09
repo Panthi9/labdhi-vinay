@@ -43,13 +43,19 @@ const LoginScreen = () => {
     //   .catch(error => alert(error.message))
   }
 
+  let x = 'logo';
   return (
+    <>
     <SafeAreaView
-      style={{ flex: 0, backgroundColor: '#D35400' }}>
-      <KeyboardAwareScrollView style={{ backgroundColor: '#1C2833', height:'100%' }}>
-        <View style={{ alignItems: 'center' }}>
+      style={{ flex: 0, backgroundColor: '#D35400' }}/>
+      <KeyboardAwareScrollView
+      contentContainerStyle={{
+        flex: 1,
+        justifyContent: 'center',
+    }} style={{ backgroundColor: '#1C2833', height:'100%' }}>
+        <View style={{ alignItems: 'center', justifyContent:'center',}}>
           <Image
-            source={require('../assets/logo.jpg')}
+            source={require(`../assets/${x}.jpg`)}
             style={{
               flexDirection: 'row',
               flexWrap: 'wrap',
@@ -99,7 +105,8 @@ const LoginScreen = () => {
           </View>
         </View>
       </KeyboardAwareScrollView>
-    </SafeAreaView>
+
+    </>
   )
 }
 

@@ -43,9 +43,14 @@ const RegistrationScreen = () => {
     }
 
     return (
+        <>
         <SafeAreaView
-            style={{ flex: 0, backgroundColor: '#D35400' }}>
-            <KeyboardAwareScrollView style={{backgroundColor: '#1C2833'}}>
+            style={{backgroundColor: '#D35400' }} />
+            <KeyboardAwareScrollView style={{backgroundColor: '#1C2833'}}
+            contentContainerStyle={{
+                flex: 1,
+                justifyContent: 'center',
+            }} >
                 <View style={{alignItems: 'center'}}>
                 <Image
                     source={require('../assets/logo.jpg')}
@@ -125,7 +130,7 @@ const RegistrationScreen = () => {
                 </View>
                 </View>
             </KeyboardAwareScrollView>
-        </SafeAreaView>
+            </>
     )
 }
 
