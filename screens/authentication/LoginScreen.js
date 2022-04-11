@@ -40,8 +40,12 @@ const LoginScreen = () => {
     /**
      * Store user detail in redux. 
      */ 
-    
-    (querySnapshot.size == 1) && navigation.replace("Home");
+
+    if(querySnapshot.size == 1) {
+      navigation.replace("Home");
+    }else{
+      handleLoginErrorDialogState()
+    }
   }
 
   useEffect(() => {

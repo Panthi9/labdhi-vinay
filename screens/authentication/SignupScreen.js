@@ -36,7 +36,11 @@ const SignupScreen = () => {
             email: email,
         }
         let response = await addDoc(userCollectionRef, doc);
-        (response.id) && navigation.replace("Login");
+        if(response.id) {
+            navigation.replace("Login");
+        }else{
+            handleSignupErrorDialogState()
+        }
     }
 
     const handleSignup = (values) => {
