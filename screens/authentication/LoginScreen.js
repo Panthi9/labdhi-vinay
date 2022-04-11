@@ -1,9 +1,10 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getFirestore, collection, where, query, getDocs } from "firebase/firestore";
 import { Dialog, Button } from 'react-native-paper';
 import { Formik } from 'formik';
 import * as yup from 'yup'
@@ -14,6 +15,8 @@ const LoginScreen = () => {
 
   const navigation = useNavigation();
   const auth = getAuth(app);
+  const db = getFirestore(app);
+  const userCollectionRef = collection(db, "users");
 
   const {
     safeAreaView, contentContainer, keyboardAwareScrollView, container, logo, inputContainer,
@@ -25,9 +28,29 @@ const LoginScreen = () => {
 
   const handleSignUp = () => navigation.replace("Signup");
 
+  const getUserByEmail = async (email) => {
+    let user;
+    const userDetial = await query(userCollectionRef, where('email', '==', email));
+    const querySnapshot = await getDocs(userDetial);
+    querySnapshot.forEach((doc) => {
+      user = doc.data();
+      user = {...user, id: doc.id}
+    });
+
+    /**
+     * Store user detail in redux. 
+     */ 
+    
+    (querySnapshot.size == 1) && navigation.replace("Home");
+  }
+
+  useEffect(() => {
+    getUserByEmail();
+  }, []);
+
   const handleLogin = (email, password) => {
     signInWithEmailAndPassword(auth, email, password)
-      .then(userCredentials => navigation.replace("Home"))
+      .then(userCredentials => getUserByEmail(email))
       .catch(error => handleLoginErrorDialogState());
   }
 

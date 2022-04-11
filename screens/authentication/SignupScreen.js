@@ -4,6 +4,7 @@ import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View, SafeAreaVie
 import { useNavigation } from '@react-navigation/core';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { Dialog, Button } from 'react-native-paper';
 import { Formik } from 'formik';
 import * as yup from 'yup'
@@ -14,6 +15,8 @@ const SignupScreen = () => {
 
     const navigation = useNavigation();
     const auth = getAuth(app);
+    const db = getFirestore(app);
+    const userCollectionRef = collection(db, "users");
 
     const {
         safeAreaView, keyboardAwareScrollView, container, logo, inputContainer,
@@ -25,9 +28,22 @@ const SignupScreen = () => {
 
     const handleLogin = () => navigation.replace("Login");
 
-    const handleSignup = (email, password) => {
+    const addUserDetail = async (values) => {
+        const {email, firstName, lastName} = values;
+        let doc = {
+            first_name: firstName,
+            last_name: lastName,
+            email: email,
+        }
+        let response = await addDoc(userCollectionRef, doc);
+        (response.id) && navigation.replace("Login");
+    }
+
+    const handleSignup = (values) => {
+        const {email, password} = values;
+        
         createUserWithEmailAndPassword(auth, email, password)
-            .then(userCredentials => navigation.replace("Login"))
+            .then(userCredentials => addUserDetail(values))
             .catch(error => handleSignupErrorDialogState());
     }
 
@@ -43,7 +59,7 @@ const SignupScreen = () => {
                     <Formik
                         validationSchema={signupValidationSchema}
                         initialValues={{ firstName: '', lastName: '', email: '', password: ''}}
-                        onSubmit={values => handleSignup(values.email, values.password)} >
+                        onSubmit={values => handleSignup(values)} >
                         {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => {
                             return (
                                 <>
