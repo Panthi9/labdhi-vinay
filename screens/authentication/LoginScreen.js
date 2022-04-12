@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View, SafeAreaView } from 'react-native';
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View, SafeAreaView, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
@@ -18,15 +18,24 @@ const LoginScreen = () => {
   const db = getFirestore(app);
   const userCollectionRef = collection(db, "users");
 
+  const fbURL = 'https://www.facebook.com/groups/5092353437469549/?multi_permalinks=5140427655995460%2C5135247693180123%2C5129797220391837&notif_id=1649326578171979&notif_t=group_activity&ref=notif';
+  const instagramURL = 'https://www.instagram.com/labdhivinay/';
+
   const {
     safeAreaView, contentContainer, keyboardAwareScrollView, container, logo, inputContainer,
     inputView, input, inputError, buttonContainer, button, buttonText, buttonOutline,
     buttonOutlineText, dialogTitle, dialogSubtitle, dialogCloseButton, dialogCloseButtonTitle,
+    socialMediaButtonContainer, socialMediaButtonView, socialMediaIcon,
   } = styles;
 
   const handleLoginErrorDialogState = () => setLoginErrorDialog(!loginErrorDialog);
 
   const handleSignUp = () => navigation.replace("Signup");
+
+  const openSocialMediaPlatform = async (url) => {
+    const supported = await Linking.canOpenURL(url);
+    (supported) && await Linking.openURL(url);
+  }
 
   const getUserByEmail = async (email) => {
     let user;
@@ -34,16 +43,16 @@ const LoginScreen = () => {
     const querySnapshot = await getDocs(userDetial);
     querySnapshot.forEach((doc) => {
       user = doc.data();
-      user = {...user, id: doc.id}
+      user = { ...user, id: doc.id }
     });
 
     /**
      * Store user detail in redux. 
-     */ 
+     */
 
-    if(querySnapshot.size == 1) {
+    if (querySnapshot.size == 1) {
       navigation.replace("Home");
-    }else{
+    } else {
       handleLoginErrorDialogState()
     }
   }
@@ -111,6 +120,25 @@ const LoginScreen = () => {
                       style={[button, buttonOutline]}>
                       <Text style={buttonOutlineText}>SIGNUP</Text>
                     </TouchableOpacity>
+                  </View>
+
+                  <View style={socialMediaButtonContainer}>
+                    <View style={socialMediaButtonView}>
+                      <TouchableOpacity
+                        onPress={() => openSocialMediaPlatform(instagramURL)}>
+                        <Image
+                          source={require(`../../assets/instagram.png`)}
+                          style={socialMediaIcon} />
+                      </TouchableOpacity>
+                    </View>
+                    <View style={socialMediaButtonView}>
+                      <TouchableOpacity
+                        onPress={() => openSocialMediaPlatform(fbURL)}>
+                        <Image
+                          source={require(`../../assets/facebook.png`)}
+                          style={socialMediaIcon} />
+                      </TouchableOpacity>
+                    </View>
                   </View>
                 </>
               );
@@ -245,6 +273,16 @@ const styles = StyleSheet.create({
   },
   dialogCloseButtonTitle: {
     color: '#FFFFFF',
+  },
+  socialMediaButtonContainer: {
+    flexDirection: 'row'
+  },
+  socialMediaButtonView: {
+    margin: 20
+  },
+  socialMediaIcon:{ 
+    height: 40, 
+    width: 40 
   }
 });
 

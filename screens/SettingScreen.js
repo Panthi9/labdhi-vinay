@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/core'
-import { Image, StyleSheet, Text, TouchableOpacity, View, FlatList, SafeAreaView } from 'react-native'
+import { Image, StyleSheet, Text, TouchableOpacity, View, SafeAreaView } from 'react-native'
 import { Avatar, Button, Card, Title, Paragraph, Colors } from 'react-native-paper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 
 const SettingScreen = () => {
     const navigation = useNavigation();
+
+    const {
+        socialMediaButtonContainer, socialMediaButtonView, socialMediaIcon,
+    } = styles;
 
     const handleSignOut = () => {
         navigation.replace("Login")
@@ -29,7 +33,7 @@ const SettingScreen = () => {
 
     const handleProfile = () => {
         navigation.push("Profile");
-        
+
     }
 
     return (
@@ -38,6 +42,7 @@ const SettingScreen = () => {
             <View style={{ paddingBottom: 10 }}>
                 <Text style={{ fontSize: 25, fontWeight: 'bold' }}> Settings </Text>
             </View>
+
             <KeyboardAwareScrollView
                 contentContainerStyle={{
                     flex: 1,
@@ -111,10 +116,77 @@ const SettingScreen = () => {
                             </Card>
                         </TouchableOpacity>
                     </View>
+
+
                 </View>
+
+                <View style={{
+                flexDirection: 'column', alignItems: 'center',
+                alignSelf: 'flex-end', justifyContent: 'space-between', marginTop: 20
+            }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold' }}> Follow Us </Text>
+                <View style={socialMediaButtonContainer}>
+                    <View style={socialMediaButtonView}>
+                        <TouchableOpacity
+                            onPress={() => openSocialMediaPlatform(instagramURL)}>
+                            <Image
+                                source={require(`../assets/instagram.png`)}
+                                style={socialMediaIcon} />
+                        </TouchableOpacity>
+                    </View>
+                    <View style={socialMediaButtonView}>
+                        <TouchableOpacity
+                            onPress={() => openSocialMediaPlatform(fbURL)}>
+                            <Image
+                                source={require(`../assets/facebook.png`)}
+                                style={socialMediaIcon} />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
             </KeyboardAwareScrollView>
+
+            {/* <View style={{
+                flexDirection: 'column', alignItems: 'center',
+                alignSelf: 'flex-end', justifyContent: 'space-between', marginBottom: 50
+            }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold' }}> Follow Us </Text>
+                <View style={socialMediaButtonContainer}>
+                    <View style={socialMediaButtonView}>
+                        <TouchableOpacity
+                            onPress={() => openSocialMediaPlatform(instagramURL)}>
+                            <Image
+                                source={require(`../assets/instagram.png`)}
+                                style={socialMediaIcon} />
+                        </TouchableOpacity>
+                    </View>
+                    <View style={socialMediaButtonView}>
+                        <TouchableOpacity
+                            onPress={() => openSocialMediaPlatform(fbURL)}>
+                            <Image
+                                source={require(`../assets/facebook.png`)}
+                                style={socialMediaIcon} />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View> */}
         </>
     );
 }
 
 export default SettingScreen;
+
+const styles = StyleSheet.create({
+    socialMediaButtonContainer: {
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        alignSelf: 'flex-end'
+    },
+    socialMediaButtonView: {
+        margin: 10
+    },
+    socialMediaIcon: {
+        height: 40,
+        width: 40
+    }
+});
