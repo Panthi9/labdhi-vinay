@@ -1,129 +1,100 @@
-import { useNavigation } from '@react-navigation/core'
+
 import React, { useEffect, useState } from 'react'
+import { useNavigation } from '@react-navigation/core'
 import { Image, StyleSheet, Text, TouchableOpacity, View, FlatList, SafeAreaView } from 'react-native'
-// import { auth } from '../firebase'
-import { Avatar, Button, Card, Title, Paragraph, Colors } from 'react-native-paper';
+import { Card } from 'react-native-paper';
 import Modal from "react-native-modal";
+import { useSelector, useDispatch } from 'react-redux';
+import { Dialog, Button } from 'react-native-paper';
 
 
 const CartScreen = () => {
-  const navigation = useNavigation();
-  let data = [
-    { name: '01' },
-    // { name: "02" },
-    // { name: "03" },
-    // {name: 04},
-    // {name: 02},
-    // {name: 04},
-    // {name: 03},
-    // {name: 01},
-    // {name: 04},
-  ];
-
   const [isModalVisible, setModalVisible] = useState(false);
+  const [addressErrorDialog, setAddressErrorDialog] = useState(false);
+  const [productList, setProductList] = useState([]);
 
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
+  const {
+    container, screenTitleContainer, screenBackIcon, screenTitle, flatListCardContainer, card,
+    cardBody, productTitleContainer, productTitle, productDescription, cardActionContainer,
+    cardActionButton, cardActionButtonIcon, dialogTitle, dialogSubtitle, dialogOkButton,
+    dialogOkButtonTitle, walletButton, walletIcon
+  } = styles;
 
-  const handleBack = () => {
-    navigation.pop()
-    // auth
-    //   .signOut()
-    //   .then(() => {
-    //     navigation.replace("Login")
-    //   })
-    //   .catch(error => alert(error.message))
-  }
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const cardItems = useSelector((state) => state.cardItems);
+  const userDetails = useSelector((state) => state.userDetails);
+
+  useEffect(() => {
+    setProductList([...cardItems]);
+    (userDetails.address) && setAddressErrorDialog(true);
+  }, [cardItems]);
+
+  const toggleModal = () => setModalVisible(!isModalVisible);
+
+  const handleBack = () => navigation.pop();
 
   return (
     <>
       <SafeAreaView />
-      <View style={styles.container}>
-        <View style={{ paddingBottom: 10,flexDirection: 'row', alignItems:'center', marginLeft:5, }}>
-        <TouchableOpacity onPress={() => handleBack()} style={{padding:10,}}>
-          <Image
-            source={require('../assets/back.png')}
-            style={{
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              resizeMode: 'contain',
-              width: 15,
-              height: 15,
-            }}
-          />
+      <View style={container}>
+        <View style={screenTitleContainer}>
+          <TouchableOpacity onPress={() => handleBack()} style={{ padding: 10, }}>
+            <Image
+              source={require('../assets/back.png')}
+              style={screenBackIcon} />
           </TouchableOpacity>
-          <View style={{flex:1}}>
-          <Text style={{ fontSize: 25, fontWeight: 'bold' }}> Cart </Text>
-          </View>
-          <TouchableOpacity onPress={() => handleBack()} style={{padding:10, backgroundColor:'#D35400', borderRadius:150/2, marginRight:5,}}>
-          <Image
-            source={require('../assets/wallet.png')}
-            style={{
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              resizeMode: 'contain',
-              width: 30,
-              height: 30,
-            }}
-          />
-          </TouchableOpacity>
+          <Text style={screenTitle}> Cart </Text>
+          {productList.length > 0 && <TouchableOpacity
+            onPress={() => handleBack()}
+            style={walletButton}>
+            <Image
+              source={require('../assets/wallet.png')}
+              style={walletIcon} />
+          </TouchableOpacity>}
         </View>
-        <View style={{flex:1,height:'100%'}}>
         <FlatList
-          data={data}
+          data={productList}
           numColumns={2}
           renderItem={({ item, index }) =>
-            <View style={{ width: '50%', padding: 5, }}>
-              <Card style={{ backgroundColor: '#FFFFFF' }}>
-                <Card.Cover
-                  source={require(`../assets/04.png`)}
-                // source={{ uri: 'https://drive.google.com/drive/folders/1nWGLjZFWqMry6qyVCUndT1f469--iGdS' }} style={{height:100}}
-                />
-                <View style={{ paddingRight: 5, paddingLeft: 5 }}>
-                  <View style={{ marginBottom: 5, }}>
-                    <Text style={{ fontSize: 18, textAlign: 'justify', fontWeight: 'bold', color: '#D35400' }}>Product Name </Text>
+            <View style={flatListCardContainer} key={index}>
+              <Card style={card}>
+                <Card.Cover source={require(`../assets/04.png`)} />
+                <View style={cardBody}>
+                  <View style={productTitleContainer}>
+                    <Text
+                      numberOfLines={2}
+                      style={productTitle}>
+                      {item.productName}
+                    </Text>
                   </View>
-                  <Text style={{ textAlign: 'justify', color: '#1C2833' }}>Lorem Ipsum is simply dummy text of the printing and typesetting industry...</Text>
+                  <Text
+                    numberOfLines={10}
+                    style={productDescription}>
+                    {item.description}
+                  </Text>
                 </View>
-                <Card.Actions style={{ justifyContent: 'flex-end', }}>
-                  <TouchableOpacity onPress={toggleModal}>
-                    <View style={{ marginRight: 5, backgroundColor: '#D35400', padding: 10, borderRadius: 150 / 2 }}>
-                      <Image
-                        source={require('../assets/binoculars.png')}
-                        style={{
-                          flexDirection: 'row',
-                          flexWrap: 'wrap',
-                          resizeMode: 'contain',
-                          width: 18,
-                          height: 18,
-                        }}
-                      />
-                    </View>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => {}}>
-                    <View style={{ marginRight: 5, backgroundColor: '#D35400', padding: 10, borderRadius: 150 / 2 }}>
+                <Card.Actions style={cardActionContainer}>
+                  <TouchableOpacity onPress={() => dispatch({ type: 'DELETE_CARD_ITEM', payload: index })}>
+                    <View style={cardActionButton}>
                       <Image
                         source={require('../assets/garbage.png')}
-                        style={{
-                          flexDirection: 'row',
-                          flexWrap: 'wrap',
-                          resizeMode: 'contain',
-                          width: 18,
-                          height: 18
-                        }}
-                      />
+                        style={cardActionButtonIcon} />
                     </View>
                   </TouchableOpacity>
-
+                  <TouchableOpacity onPress={toggleModal}>
+                    <View style={cardActionButton}>
+                      <Image
+                        source={require('../assets/binoculars.png')}
+                        style={cardActionButtonIcon} />
+                    </View>
+                  </TouchableOpacity>
                 </Card.Actions>
               </Card>
             </View>
-          }
-        />
-        </View>
-
+          } />
       </View>
+
       <Modal isVisible={isModalVisible} style={{ margin: 5 }}>
         <View style={{ backgroundColor: '#FFFFFF', paddingRight: 5, paddingLeft: 5, paddingBottom: 15, paddingTop: 15 }}>
           <TouchableOpacity onPress={toggleModal}>
@@ -148,6 +119,28 @@ const CartScreen = () => {
           </View>
         </View>
       </Modal>
+
+      <Dialog
+        visible={addressErrorDialog}
+        onDismiss={() => handleBack()}>
+        <Dialog.Content>
+          <View>
+            <Text style={dialogTitle}>
+              {`User Details.`}
+            </Text>
+            <Text style={dialogSubtitle}>
+              {`Please provide the shipping address detail.`}
+            </Text>
+          </View>
+        </Dialog.Content>
+        <Dialog.Actions>
+          <Button
+            style={dialogOkButton}
+            onPress={() => handleBack()}>
+            <Text style={dialogOkButtonTitle}>OK</Text>
+          </Button>
+        </Dialog.Actions>
+      </Dialog>
     </>
   )
 }
@@ -157,20 +150,92 @@ export default CartScreen
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
   },
-  button: {
-    backgroundColor: '#0782F9',
-    width: '80%',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 40,
+  screenTitleContainer: {
+    paddingBottom: 10,
+    flexDirection: 'row'
   },
-  buttonText: {
-    color: 'white',
-    fontWeight: '700',
+  screenTitle: {
+    flex: 1,
+    fontSize: 25,
+    fontWeight: 'bold'
+  },
+  screenBackIcon: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    resizeMode: 'contain',
+    width: 15,
+    height: 15,
+  },
+  flatListCardContainer:
+  {
+    width: '50%',
+    padding: 5,
+  },
+  card: {
+    backgroundColor: '#FFFFFF'
+  },
+  cardBody: {
+    paddingRight: 5,
+    paddingLeft: 5
+  },
+  productTitleContainer: {
+    marginBottom: 5,
+  },
+  productTitle: {
+    height: 50,
+    fontSize: 18,
+    textAlign: 'justify',
+    fontWeight: 'bold',
+    color: '#D35400',
+  },
+  productDescription: {
+    height: 100,
+    textAlign: 'justify',
+    color: '#1C2833'
+  },
+  cardActionContainer: {
+    justifyContent: 'flex-end',
+  },
+  cardActionButton: {
+    marginRight: 5,
+    backgroundColor: '#D35400',
+    padding: 10,
+    borderRadius: 150 / 2
+  },
+  cardActionButtonIcon: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    resizeMode: 'contain',
+    width: 18,
+    height: 18
+  },
+  dialogTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#D35400'
+  },
+  dialogSubtitle: {
     fontSize: 16,
   },
+  dialogOkButton: {
+    backgroundColor: '#D35400',
+  },
+  dialogOkButtonTitle: {
+    color: '#FFFFFF',
+  },
+  walletIcon:{
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    resizeMode: 'contain',
+    width: 30,
+    height: 30,
+  },
+  walletButton:{ 
+    padding: 10, 
+    backgroundColor: '#D35400', 
+    borderRadius: 150 / 2, 
+    marginRight: 5, 
+  }
 })

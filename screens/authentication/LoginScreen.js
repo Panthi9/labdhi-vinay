@@ -6,6 +6,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { getFirestore, collection, where, query, getDocs } from "firebase/firestore";
 import { Dialog, Button } from 'react-native-paper';
+import { useDispatch } from 'react-redux';
 import { Formik } from 'formik';
 import * as yup from 'yup'
 import { app } from '../../firebase';
@@ -14,6 +15,8 @@ const LoginScreen = () => {
   const [loginErrorDialog, setLoginErrorDialog] = useState('');
 
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
   const auth = getAuth(app);
   const db = getFirestore(app);
   const userCollectionRef = collection(db, "users");
@@ -28,7 +31,10 @@ const LoginScreen = () => {
     socialMediaButtonContainer, socialMediaButtonView, socialMediaIcon,
   } = styles;
 
-  const handleLoginErrorDialogState = () => setLoginErrorDialog(!loginErrorDialog);
+  const handleLoginErrorDialogState = () => {
+    dispatch({ type: 'NOT_AUTHENTICATED' });
+    setLoginErrorDialog(!loginErrorDialog);
+  }
 
   const handleSignUp = () => navigation.replace("Signup");
 
@@ -51,6 +57,7 @@ const LoginScreen = () => {
      */
 
     if (querySnapshot.size == 1) {
+      dispatch({ type: 'IS_AUTHENTICATED', payload: user });
       navigation.replace("Home");
     } else {
       handleLoginErrorDialogState()

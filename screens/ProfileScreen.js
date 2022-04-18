@@ -2,6 +2,7 @@ import { useNavigation } from '@react-navigation/core'
 import React, { useEffect, useState } from 'react'
 import { Image, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView, SafeAreaView } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
+import { useDispatch, useSelector } from 'react-redux';
 // import { auth } from '../firebase'
 
 const ProfileScreen = () => {
@@ -9,6 +10,7 @@ const ProfileScreen = () => {
     const [password, setPassword] = useState('')
 
     const navigation = useNavigation()
+    const isAuthenticated = useSelector((state) => state.isAuthenticated);
 
     useEffect(() => {
         // const unsubscribe = auth.onAuthStateChanged(user => {
@@ -18,6 +20,8 @@ const ProfileScreen = () => {
         // })
 
         // return unsubscribe
+       console.log("isAuthenticated",isAuthenticated);
+
     }, [])
 
     const handleSignUp = () => {
