@@ -7,8 +7,18 @@ const initialState = {
 function appReducer(state = initialState, action) {
     switch (action.type) {
         case "IS_AUTHENTICATED":
-
-            return { ...state, isAuthenticated: true, userDetails: action.payload }
+            return { 
+                ...state, 
+                isAuthenticated: true, 
+                userDetails: {
+                    id: action.payload.id,
+                    firstName: action.payload.first_name,
+                    lastName: action.payload.last_name,
+                    email: action.payload.email,
+                    phonenumber: action.payload.phonenumber ? action.payload.phonenumber : '',
+                    address: action.payload.address ? action.payload.address : '',
+                } 
+            }
         case "NOT_AUTHENTICATED":
             return { ...state, isAuthenticated: false, userDetails: null }
         case "RESET_AUTHENTICATION":
@@ -21,8 +31,9 @@ function appReducer(state = initialState, action) {
             }
         case "DELETE_CARD_ITEM":
             state.cardItems.splice(action.payload, 1);
-            // console.log("state", state, action.payload);
             return { ...state, cardItems: [...state.cardItems] }
+        case "DELETE_CARD":
+            return { ...state, cardItems: []}
         default:
             return state;
     }

@@ -8,6 +8,7 @@ import SignupScreen from './screens/authentication/SignupScreen';
 import CartScreen from './screens/CartScreen';
 import TabNavigation from './tabNavigation/TabNavigation';
 import ProfileScreen from './screens/ProfileScreen';
+import OrderScreen from './screens/OrderScreen';
 import appReducer from './appReducer';
 
 
@@ -23,6 +24,7 @@ export default function App() {
           <Stack.Screen options={{ headerShown: false }} name="Signup" component={SignupScreen} />
           <Stack.Screen options={{ headerShown: false }} name="Cart" component={CartScreen} />
           <Stack.Screen options={{ headerShown: false }} name="Profile" component={ProfileScreen} />
+          <Stack.Screen options={{ headerShown: false }} name="Order" component={OrderScreen} />
           <Stack.Screen name="Home" component={TabNavigation}
             options={{
               headerShown: false,

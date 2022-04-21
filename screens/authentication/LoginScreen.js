@@ -52,10 +52,6 @@ const LoginScreen = () => {
       user = { ...user, id: doc.id }
     });
 
-    /**
-     * Store user detail in redux. 
-     */
-
     if (querySnapshot.size == 1) {
       dispatch({ type: 'IS_AUTHENTICATED', payload: user });
       navigation.replace("Home");
@@ -190,7 +186,7 @@ const loginValidationSchema = yup.object().shape({
     .string()
     .min(8, ({ min }) => `Password must be at least ${min} characters`)
     .required('Password is required'),
-})
+});
 
 const styles = StyleSheet.create({
   safeAreaView: {

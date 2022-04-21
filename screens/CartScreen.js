@@ -6,6 +6,8 @@ import { Card } from 'react-native-paper';
 import Modal from "react-native-modal";
 import { useSelector, useDispatch } from 'react-redux';
 import { Dialog, Button } from 'react-native-paper';
+import { getFirestore, collection, getDocs, addDoc, deleteDoc, updateDoc, doc } from "firebase/firestore";
+import { app } from '../firebase';
 
 
 const CartScreen = () => {
@@ -25,14 +27,31 @@ const CartScreen = () => {
   const cardItems = useSelector((state) => state.cardItems);
   const userDetails = useSelector((state) => state.userDetails);
 
+
+  const db = getFirestore(app);
+  const orderCollectionRef = collection(db, "orders");
+
   useEffect(() => {
     setProductList([...cardItems]);
-    (userDetails.address) && setAddressErrorDialog(true);
+    (!userDetails.address) && setAddressErrorDialog(true);
   }, [cardItems]);
 
   const toggleModal = () => setModalVisible(!isModalVisible);
 
   const handleBack = () => navigation.pop();
+
+  const addOrderHandler = () => {
+    productList.forEach(async (product) => {
+      let orderDetail = {
+        product_id: product.id,
+        user_id: userDetails.id,
+        status: 'placed'.toUpperCase(),
+        date: new Date(),
+      }
+      await addDoc(orderCollectionRef, orderDetail);
+    }); 
+    dispatch({ type: 'DELETE_CARD' })
+  }
 
   return (
     <>
@@ -46,7 +65,7 @@ const CartScreen = () => {
           </TouchableOpacity>
           <Text style={screenTitle}> Cart </Text>
           {productList.length > 0 && <TouchableOpacity
-            onPress={() => handleBack()}
+            onPress={() =>  addOrderHandler()}
             style={walletButton}>
             <Image
               source={require('../assets/wallet.png')}
@@ -82,7 +101,7 @@ const CartScreen = () => {
                         style={cardActionButtonIcon} />
                     </View>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={toggleModal}>
+                  <TouchableOpacity onPress={() => toggleModal()}>
                     <View style={cardActionButton}>
                       <Image
                         source={require('../assets/binoculars.png')}

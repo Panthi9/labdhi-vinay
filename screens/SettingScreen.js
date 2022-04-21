@@ -11,30 +11,10 @@ const SettingScreen = () => {
         socialMediaButtonContainer, socialMediaButtonView, socialMediaIcon,
     } = styles;
 
-    const handleSignOut = () => {
-        navigation.replace("Login")
-        // auth
-        //   .signOut()
-        //   .then(() => {
-        //     navigation.replace("Login")
-        //   })
-        //   .catch(error => alert(error.message))
-    }
-
-    const handleCart = () => {
-        navigation.push("Cart")
-        // auth
-        //   .signOut()
-        //   .then(() => {
-        //     navigation.replace("Login")
-        //   })
-        //   .catch(error => alert(error.message))
-    }
-
-    const handleProfile = () => {
-        navigation.push("Profile");
-
-    }
+    const handleSignOut = () => navigation.replace("Login");
+    const handleCart = () => navigation.push("Cart");
+    const handleProfile = () => navigation.push("Profile");
+    const handleOrder = () => navigation.push("Order");
 
     return (
         <>
@@ -65,6 +45,29 @@ const SettingScreen = () => {
                                     <View style={{ marginLeft: 10 }}>
                                         <Text style={{ color: '#FFFFFF', fontSize: 20, fontWeight: 'bold' }}> CART </Text>
                                         <Text style={{ color: '#FFFFFF', fontSize: 12 }}> View your selected product for payment </Text>
+                                    </View>
+                                </View>
+                            </Card>
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={{ marginTop: 10 }}>
+                        <TouchableOpacity onPress={() => handleOrder()}>
+                            <Card style={{ backgroundColor: '#1C2833' }}>
+                                <View style={{ flexDirection: 'row', paddingLeft: 10, alignItems: 'center', paddingTop: 10, paddingBottom: 10 }}>
+                                    <Image
+                                        source={require('../assets/bag.png')}
+                                        style={{
+                                            flexDirection: 'row',
+                                            flexWrap: 'wrap',
+                                            resizeMode: 'contain',
+                                            width: 40,
+                                            height: 40
+                                        }}
+                                    />
+                                    <View style={{ marginLeft: 10 }}>
+                                        <Text style={{ color: '#FFFFFF', fontSize: 20, fontWeight: 'bold' }}> ORDERS </Text>
+                                        <Text style={{ color: '#FFFFFF', fontSize: 12 }}> View your product order history </Text>
                                     </View>
                                 </View>
                             </Card>
