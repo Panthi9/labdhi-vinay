@@ -20,12 +20,7 @@ export default function App() {
     <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
-          <Stack.Screen options={{ headerShown: false }} name="Signup" component={SignupScreen} />
-          <Stack.Screen options={{ headerShown: false }} name="Cart" component={CartScreen} />
-          <Stack.Screen options={{ headerShown: false }} name="Profile" component={ProfileScreen} />
-          <Stack.Screen options={{ headerShown: false }} name="Order" component={OrderScreen} />
-          <Stack.Screen name="Home" component={TabNavigation}
+        <Stack.Screen name="Home" component={TabNavigation}
             options={{
               headerShown: false,
               headerTitle: 'LABDHI VINAY',
@@ -37,6 +32,11 @@ export default function App() {
               }
             }}
           />
+          <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
+          <Stack.Screen options={{ headerShown: false }} name="Signup" component={SignupScreen} />
+          <Stack.Screen options={{ headerShown: false }} name="Cart" component={CartScreen} />
+          <Stack.Screen options={{ headerShown: false }} name="Profile" component={ProfileScreen} />
+          <Stack.Screen options={{ headerShown: false }} name="Order" component={OrderScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

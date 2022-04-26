@@ -8,12 +8,16 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Dialog, Button } from 'react-native-paper';
 import { getFirestore, collection, getDocs, addDoc, deleteDoc, updateDoc, doc } from "firebase/firestore";
 import { app } from '../firebase';
+import { StripeProvider } from '@stripe/stripe-react-native';
+import PaymentScreen from './PaymentScreen';
 
 
 const CartScreen = () => {
   const [isModalVisible, setModalVisible] = useState(false);
+  const [isPaymentModalVisible, setPaymentModalVisible] = useState(false);
   const [addressErrorDialog, setAddressErrorDialog] = useState(false);
   const [productList, setProductList] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   const {
     container, screenTitleContainer, screenBackIcon, screenTitle, flatListCardContainer, card,
@@ -36,7 +40,15 @@ const CartScreen = () => {
     (!userDetails.address) && setAddressErrorDialog(true);
   }, [cardItems]);
 
-  const toggleModal = () => setModalVisible(!isModalVisible);
+  const toggleModal = (productDetail) => {
+    setModalVisible(!isModalVisible);
+    setSelectedProduct(productDetail)
+  }
+
+  const togglePaymentModal = (status) => {
+    setPaymentModalVisible(status);
+    addOrderHandler();
+  }
 
   const handleBack = () => navigation.pop();
 
@@ -49,7 +61,7 @@ const CartScreen = () => {
         date: new Date(),
       }
       await addDoc(orderCollectionRef, orderDetail);
-    }); 
+    });
     dispatch({ type: 'DELETE_CARD' })
   }
 
@@ -64,21 +76,25 @@ const CartScreen = () => {
               style={screenBackIcon} />
           </TouchableOpacity>
           <Text style={screenTitle}> Cart </Text>
+
           {productList.length > 0 && <TouchableOpacity
-            onPress={() =>  addOrderHandler()}
+            onPress={() => togglePaymentModal(true)}
             style={walletButton}>
             <Image
               source={require('../assets/wallet.png')}
               style={walletIcon} />
           </TouchableOpacity>}
         </View>
+
         <FlatList
           data={productList}
           numColumns={2}
           renderItem={({ item, index }) =>
             <View style={flatListCardContainer} key={index}>
               <Card style={card}>
-                <Card.Cover source={require(`../assets/04.png`)} />
+                <Card.Cover source={{
+                  uri: item.imageUrl,
+                }} />
                 <View style={cardBody}>
                   <View style={productTitleContainer}>
                     <Text
@@ -101,7 +117,7 @@ const CartScreen = () => {
                         style={cardActionButtonIcon} />
                     </View>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => toggleModal()}>
+                  <TouchableOpacity onPress={() => toggleModal(item)}>
                     <View style={cardActionButton}>
                       <Image
                         source={require('../assets/binoculars.png')}
@@ -114,30 +130,76 @@ const CartScreen = () => {
           } />
       </View>
 
-      <Modal isVisible={isModalVisible} style={{ margin: 5 }}>
-        <View style={{ backgroundColor: '#FFFFFF', paddingRight: 5, paddingLeft: 5, paddingBottom: 15, paddingTop: 15 }}>
-          <TouchableOpacity onPress={toggleModal}>
-            <View style={{ marginRight: 5, alignItems: 'flex-end' }}>
-              <Image
-                source={require('../assets/close.png')}
-                style={{
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
-                  resizeMode: 'contain',
-                  width: 15,
-                  height: 15,
-                }}
-              />
+      {isPaymentModalVisible &&
+        <Modal isVisible={true} style={{ margin: 5 }}>
+          <View style={{ backgroundColor: '#FFFFFF', paddingRight: 5, paddingLeft: 5, paddingBottom: 15, paddingTop: 15 }}>
+            <TouchableOpacity onPress={() => togglePaymentModal(false)}>
+              <View style={{ marginRight: 5, alignItems: 'flex-end', padding: 10 }}>
+                <Image
+                  source={require('../assets/close.png')}
+                  style={{
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    resizeMode: 'contain',
+                    width: 15,
+                    height: 15,
+                  }}
+                />
+              </View>
+            </TouchableOpacity>
+            <View style={{ paddingRight: 5, paddingLeft: 5, height: 250 }}>
+              <View style={cardBody}>
+                <StripeProvider
+                  publishableKey={'pk_test_51KsV96SJINhNLhDFA2wzyCn5n9We2iaud8gm6MvI5np09eQX3DZOpzRc0D8xXu1PzEfZx1LBPNvlCQlMyT34WRhv00ePRdTiYB'}
+                  merchantIdentifier="merchant.identifier">
+                  <PaymentScreen />
+                </StripeProvider>
+              </View>
             </View>
-          </TouchableOpacity>
-          <View style={{ paddingRight: 5, paddingLeft: 5 }}>
-            <View style={{ marginBottom: 5, }}>
-              <Text style={{ fontSize: 18, textAlign: 'justify', fontWeight: 'bold', color: '#D35400' }}>Product Name </Text>
-            </View>
-            <Text style={{ textAlign: 'justify', color: '#1C2833' }}>Lorem Ipsum is simply dummy text of the printing and typesetting industry...</Text>
           </View>
-        </View>
-      </Modal>
+        </Modal>}
+
+      {selectedProduct &&
+        <Modal isVisible={isModalVisible} style={{ margin: 5 }}>
+          <View style={{ backgroundColor: '#FFFFFF', paddingRight: 5, paddingLeft: 5, paddingBottom: 15, paddingTop: 15 }}>
+            <TouchableOpacity onPress={() => toggleModal(null)}>
+              <View style={{ marginRight: 5, alignItems: 'flex-end', padding: 10 }}>
+                <Image
+                  source={require('../assets/close.png')}
+                  style={{
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    resizeMode: 'contain',
+                    width: 15,
+                    height: 15,
+                  }}
+                />
+              </View>
+            </TouchableOpacity>
+            <View style={{ paddingRight: 5, paddingLeft: 5 }}>
+              <View style={cardBody}>
+                <View style={productTitleContainer}>
+                  <Text
+                    numberOfLines={1}
+                    style={productTitle}>
+                    {selectedProduct && selectedProduct.productName}
+                  </Text>
+                </View>
+                <View style={productTitleContainer}>
+                  <Text
+                    numberOfLines={1}>
+                    {`\u00A3 ${selectedProduct && selectedProduct.price}`}
+                  </Text>
+                </View>
+                <Text
+                  numberOfLines={10}
+                  style={productDescription}>
+                  {selectedProduct && selectedProduct.description}
+                </Text>
+              </View>
+            </View>
+          </View>
+        </Modal>}
 
       <Dialog
         visible={addressErrorDialog}
@@ -244,17 +306,17 @@ const styles = StyleSheet.create({
   dialogOkButtonTitle: {
     color: '#FFFFFF',
   },
-  walletIcon:{
+  walletIcon: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     resizeMode: 'contain',
     width: 30,
     height: 30,
   },
-  walletButton:{ 
-    padding: 10, 
-    backgroundColor: '#D35400', 
-    borderRadius: 150 / 2, 
-    marginRight: 5, 
+  walletButton: {
+    padding: 10,
+    backgroundColor: '#D35400',
+    borderRadius: 150 / 2,
+    marginRight: 5,
   }
 })

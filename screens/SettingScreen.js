@@ -1,3 +1,4 @@
+import { useSelector } from 'react-redux';
 import React, { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/core'
 import { Image, StyleSheet, Text, TouchableOpacity, View, SafeAreaView } from 'react-native'
@@ -11,10 +12,13 @@ const SettingScreen = () => {
         socialMediaButtonContainer, socialMediaButtonView, socialMediaIcon,
     } = styles;
 
+    const isAuthenticated = useSelector((state) => state.isAuthenticated);
+
     const handleSignOut = () => navigation.replace("Login");
     const handleCart = () => navigation.push("Cart");
     const handleProfile = () => navigation.push("Profile");
     const handleOrder = () => navigation.push("Order");
+    const handleLogin = () => navigation.push("Login");
 
     return (
         <>
@@ -28,7 +32,7 @@ const SettingScreen = () => {
                     flex: 1,
                 }} style={{ height: '100%' }}>
                 <View style={{ margin: 5 }}>
-                    <View >
+                    {isAuthenticated && <View >
                         <TouchableOpacity onPress={() => handleCart()}>
                             <Card style={{ backgroundColor: '#1C2833' }}>
                                 <View style={{ flexDirection: 'row', paddingLeft: 10, alignItems: 'center', paddingTop: 10, paddingBottom: 10 }}>
@@ -49,9 +53,9 @@ const SettingScreen = () => {
                                 </View>
                             </Card>
                         </TouchableOpacity>
-                    </View>
+                    </View>}
 
-                    <View style={{ marginTop: 10 }}>
+                    {isAuthenticated && <View style={{ marginTop: 10 }}>
                         <TouchableOpacity onPress={() => handleOrder()}>
                             <Card style={{ backgroundColor: '#1C2833' }}>
                                 <View style={{ flexDirection: 'row', paddingLeft: 10, alignItems: 'center', paddingTop: 10, paddingBottom: 10 }}>
@@ -72,9 +76,9 @@ const SettingScreen = () => {
                                 </View>
                             </Card>
                         </TouchableOpacity>
-                    </View>
+                    </View>}
 
-                    <View style={{ marginTop: 10 }}>
+                    {isAuthenticated && <View style={{ marginTop: 10 }}>
                         <TouchableOpacity onPress={() => handleProfile()}>
                             <Card style={{ backgroundColor: '#1C2833' }}>
                                 <View style={{ flexDirection: 'row', paddingLeft: 10, alignItems: 'center', paddingTop: 10, paddingBottom: 10 }}>
@@ -95,9 +99,32 @@ const SettingScreen = () => {
                                 </View>
                             </Card>
                         </TouchableOpacity>
-                    </View>
+                    </View>}
 
                     <View style={{ marginTop: 10 }}>
+                        <TouchableOpacity onPress={() => handleSignOut()}>
+                            <Card style={{ backgroundColor: '#1C2833' }}>
+                                <View style={{ flexDirection: 'row', paddingLeft: 10, alignItems: 'center', paddingTop: 10, paddingBottom: 10 }}>
+                                    <Image
+                                        source={require('../assets/support.png')}
+                                        style={{
+                                            flexDirection: 'row',
+                                            flexWrap: 'wrap',
+                                            resizeMode: 'contain',
+                                            width: 40,
+                                            height: 40
+                                        }}
+                                    />
+                                    <View style={{ marginLeft: 10 }}>
+                                        <Text style={{ color: '#FFFFFF', fontSize: 20, fontWeight: 'bold' }}> Contact US </Text>
+                                        <Text style={{ color: '#FFFFFF', fontSize: 12 }}> Connect with over store </Text>
+                                    </View>
+                                </View>
+                            </Card>
+                        </TouchableOpacity>
+                    </View>
+
+                    {isAuthenticated && <View style={{ marginTop: 10 }}>
                         <TouchableOpacity onPress={() => handleSignOut()}>
                             <Card style={{ backgroundColor: '#1C2833' }}>
                                 <View style={{ flexDirection: 'row', paddingLeft: 10, alignItems: 'center', paddingTop: 10, paddingBottom: 10 }}>
@@ -118,35 +145,56 @@ const SettingScreen = () => {
                                 </View>
                             </Card>
                         </TouchableOpacity>
-                    </View>
+                    </View>}
 
-
+                    {!isAuthenticated && <View style={{ marginTop: 10 }}>
+                        <TouchableOpacity onPress={() => handleLogin()}>
+                            <Card style={{ backgroundColor: '#1C2833' }}>
+                                <View style={{ flexDirection: 'row', paddingLeft: 10, alignItems: 'center', paddingTop: 10, paddingBottom: 10 }}>
+                                    <Image
+                                        source={require('../assets/enter.png')}
+                                        style={{
+                                            flexDirection: 'row',
+                                            flexWrap: 'wrap',
+                                            resizeMode: 'contain',
+                                            width: 40,
+                                            height: 40
+                                        }}
+                                    />
+                                    <View style={{ marginLeft: 10 }}>
+                                        <Text style={{ color: '#FFFFFF', fontSize: 20, fontWeight: 'bold' }}> LOGIN </Text>
+                                        <Text style={{ color: '#FFFFFF', fontSize: 12 }}> Login with application </Text>
+                                    </View>
+                                </View>
+                            </Card>
+                        </TouchableOpacity>
+                    </View>}
                 </View>
 
                 <View style={{
-                flexDirection: 'column', alignItems: 'center',
-                alignSelf: 'flex-end', justifyContent: 'space-between', marginTop: 20
-            }}>
-                <Text style={{ fontSize: 14, fontWeight: 'bold' }}> Follow Us </Text>
-                <View style={socialMediaButtonContainer}>
-                    <View style={socialMediaButtonView}>
-                        <TouchableOpacity
-                            onPress={() => openSocialMediaPlatform(instagramURL)}>
-                            <Image
-                                source={require(`../assets/instagram.png`)}
-                                style={socialMediaIcon} />
-                        </TouchableOpacity>
-                    </View>
-                    <View style={socialMediaButtonView}>
-                        <TouchableOpacity
-                            onPress={() => openSocialMediaPlatform(fbURL)}>
-                            <Image
-                                source={require(`../assets/facebook.png`)}
-                                style={socialMediaIcon} />
-                        </TouchableOpacity>
+                    flexDirection: 'column', alignItems: 'center',
+                    alignSelf: 'flex-end', justifyContent: 'space-between', marginTop: 20
+                }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold' }}> Follow Us </Text>
+                    <View style={socialMediaButtonContainer}>
+                        <View style={socialMediaButtonView}>
+                            <TouchableOpacity
+                                onPress={() => openSocialMediaPlatform(instagramURL)}>
+                                <Image
+                                    source={require(`../assets/instagram.png`)}
+                                    style={socialMediaIcon} />
+                            </TouchableOpacity>
+                        </View>
+                        <View style={socialMediaButtonView}>
+                            <TouchableOpacity
+                                onPress={() => openSocialMediaPlatform(fbURL)}>
+                                <Image
+                                    source={require(`../assets/facebook.png`)}
+                                    style={socialMediaIcon} />
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
-            </View>
             </KeyboardAwareScrollView>
 
             {/* <View style={{

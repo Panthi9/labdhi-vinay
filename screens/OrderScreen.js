@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/core'
 import { Image, StyleSheet, Text, TouchableOpacity, View, FlatList, SafeAreaView } from 'react-native';
-import { getFirestore, collection, getDocs, where, query, doc, getDoc } from "firebase/firestore";
+import { getFirestore, collection, getDocs, where, query, doc, getDoc, updateDoc } from "firebase/firestore";
 import { app } from '../firebase';
 import { Card } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
+import moment from 'moment';
 
 const OrderScreen = () => {
     const [orders, setOrders] = useState([]);
@@ -41,33 +42,39 @@ const OrderScreen = () => {
 
         let orderDocCollection = [];
         orderQuerySnapshot.forEach(orderDoc => {
-
             orderDocCollection.push({
                 id: orderDoc.id,
-                date: new Date(orderDoc.data().date),
+                date: orderDoc.data().date ? moment(new Date(orderDoc.data().date.seconds * 1000)).format('DD-MM-YYYY') : '-',
                 status: orderDoc.data().status,
                 productId: orderDoc.data().product_id,
             });
         });
 
         for (const order of orderDocCollection) {
-            let productName;
             let orderDetails;
-
             const productQuerySnapshot = doc(db, 'products', order.productId);
             const docSnap = await getDoc(productQuerySnapshot);
 
             try {
-                productName = docSnap.data().product_name;
                 orderDetails = {
                     ...order,
-                    productName: productName,
+                    productName: docSnap.data().product_name,
+                    imageUrl: docSnap.data().image_url,
                 }
                 orders.push(orderDetails);
             } catch (error) { }
         }
 
+            
         setOrders(orders);
+    }
+
+    const onOrderCancleHandler = async (id) => {
+        let orderDetail = {
+            status: 'CANCLE'
+        }
+        await updateDoc(doc(db, 'orders', id), orderDetail);
+        getOrders();
     }
 
     return (
@@ -90,7 +97,9 @@ const OrderScreen = () => {
                                 <Card style={{ backgroundColor: '#1C2833' }}>
                                     <View style={{ flexDirection: 'row', paddingLeft: 10, alignItems: 'center', paddingTop: 10, paddingBottom: 10 }}>
                                         <Image
-                                            source={require('../assets/04.png')}
+                                            source={{
+                                                uri: item.imageUrl,
+                                            }}
                                             style={{
                                                 flexDirection: 'row',
                                                 flexWrap: 'wrap',
@@ -106,7 +115,7 @@ const OrderScreen = () => {
                                         </View>
                                         {item.status == 'PLACED' ?
                                             <View style={{ marginLeft: 10 }}>
-                                                <TouchableOpacity onPress={() => { }}>
+                                                <TouchableOpacity onPress={() => onOrderCancleHandler(item.id)}>
                                                     <View style={cardActionButton}>
                                                         <Text style={{ color: '#FFFFFF', fontSize: 12, marginTop: 5 }}> {'CANCLE'} </Text>
                                                     </View>
@@ -179,7 +188,9 @@ const styles = StyleSheet.create({
         marginRight: 5,
         backgroundColor: '#D35400',
         padding: 10,
-        borderRadius: 10
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     cardActionButtonIcon: {
         flexDirection: 'row',
