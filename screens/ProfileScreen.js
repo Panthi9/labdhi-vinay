@@ -56,7 +56,7 @@ const ProfileScreen = () => {
 
         if (querySnapshot.size == 1) {
             dispatch({ type: 'IS_AUTHENTICATED', payload: user });
-        } 
+        }
         updateEditProfileFormState(false);
     }
 
@@ -151,12 +151,12 @@ const ProfileScreen = () => {
 
                                             <View style={textInputContainer}>
                                                 <TextInput
-                                                    placeholder="Address"
+                                                    placeholder="Post Code"
                                                     placeholderTextColor={'#1C2833'}
-                                                    onChangeText={handleChange('address')}
-                                                    onBlur={handleBlur('address')}
-                                                    value={values.address}
-                                                    style={[input, ((errors.address && touched.address) && inputError)]} />
+                                                    onChangeText={handleChange('postalCode')}
+                                                    onBlur={handleBlur('postalCode')}
+                                                    value={values.postalCode}
+                                                    style={[input, ((errors.postalCode && touched.postalCode) && inputError)]} />
                                             </View>
                                         </View>
 
@@ -216,6 +216,17 @@ const ProfileScreen = () => {
                                     </Text>
                                 </View>
                             </View> : <View />}
+                        {userDetails.postalCode ?
+                            <View style={profileContainer}>
+                                <Image
+                                    source={require('../assets/home.png')}
+                                    style={profileIcon} />
+                                <View style={profileDetailContainer}>
+                                    <Text style={profileDetailText}>
+                                        {userDetails.postalCode}
+                                    </Text>
+                                </View>
+                            </View> : <View />}
                     </View>}
             </KeyboardAwareScrollView>
         </>
@@ -240,8 +251,6 @@ const editProfileValidationSchema = yup.object().shape({
         .required('Address is required'),
     postalCode: yup
         .string()
-        .max(10)
-        .min(10)
         .required('Postal Code is required'),
     phonenumber: yup
         .string()

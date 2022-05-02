@@ -61,24 +61,23 @@ const CartScreen = () => {
 
   const handleBack = () => navigation.pop();
 
-  const addOrderHandler = (userDetails) => {
+  const addOrderHandler = (userDetail) => {
     productList.forEach(async (product) => {
       let orderDetail = {
         product_id: product.id,
-        user_id: userDetails ? userDetails.id : '',
+        user_id: userDetails && userDetails.id ? userDetails.id : '',
         status: 'placed'.toUpperCase(),
         qty: product.qty,
         price: product.qty * product.price,
         date: new Date(),
       }
-      orderDetail = userDetails ? userDetails : { 
+      orderDetail = userDetails && userDetails.id ? orderDetail : { 
         ...orderDetail, 
-        address: address,
-        user_name: `${userDetails.firstName} ${userDetails.lastName}`,
-        phonenumber: userDetails.phonenumber,
-        post_code: userDetails.postCode,
+        address: userDetail.address,
+        user_name: `${userDetail.firstName} ${userDetail.lastName}`,
+        phonenumber: userDetail.phonenumber,
+        post_code: userDetail.postalCode,
       }
-
       await addDoc(orderCollectionRef, orderDetail);
     });
     dispatch({ type: 'DELETE_CARD' });
@@ -207,6 +206,7 @@ const CartScreen = () => {
                     lastName={userDetails && userDetails.lastName ? userDetails.lastName : ''}
                     address={userDetails && userDetails.address ? userDetails.address : ''}
                     postalCode={userDetails && userDetails.postalCode ? userDetails.postalCode : ''}
+                    phonenumber={userDetails && userDetails.phonenumber ? userDetails.phonenumber : ''}
                     addOrder={(userDetails) => addOrderHandler(userDetails)}
                     totalPrice={totalPrice} />
                 </StripeProvider>

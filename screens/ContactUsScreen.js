@@ -3,7 +3,8 @@ import { useNavigation } from '@react-navigation/core';
 import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { app } from '../firebase';
 import { Formik } from 'formik';
-import * as yup from 'yup'
+import * as yup from 'yup';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 
 const ContactUs = (props) => {
 
@@ -44,7 +45,7 @@ const ContactUs = (props) => {
                     </TouchableOpacity>
                     <Text style={screenTitle}> CONTACT US </Text>
                 </View>
-                <ScrollView>
+                <KeyboardAwareScrollView style={{height: '100%'}}>
                     <View style={{ marginHorizontal: 25}}>
                         <Text style={{fontSize:20, marginVertical: 20,}}>Shop Detail</Text>
                         <Text style={{fontSize:15, marginVertical: 18,}}>Labdhi Vinay</Text> 
@@ -114,7 +115,7 @@ const ContactUs = (props) => {
                             );
                         }}
                     </Formik>
-                </ScrollView>
+                </KeyboardAwareScrollView>
             </View>
         </View>
     );

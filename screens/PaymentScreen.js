@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Image, StyleSheet, TextInput, TouchableOpacity, Alert, Text, ScrollView } from "react-native";
 import { CardField, useConfirmPayment } from "@stripe/stripe-react-native";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 
 //ADD localhost address of your server
 const API_URL = "http://localhost:3000";
@@ -11,6 +12,7 @@ const PaymentScreen = (props) => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [address, setAddress] = useState('');
+    const [phonenumber, setPhonenumber] = useState('');
     const [postalCode, setPostalCode] = useState('');
     const [cardDetails, setCardDetails] = useState();
     const { confirmPayment, loading } = useConfirmPayment();
@@ -20,6 +22,7 @@ const PaymentScreen = (props) => {
         setAddress(props.lastName);
         setAddress(props.address);
         setAddress(props.postalCode);
+        setPhonenumber(props.phonenumber)
     }, []);
 
     const fetchPaymentIntentClientSecret = async () => {
@@ -34,14 +37,28 @@ const PaymentScreen = (props) => {
     };
 
     const handlePayPress = async () => {
-        if (!cardDetails?.complete || !firstName || !address || !lastName || !postalCode) {
-            Alert.alert("Please enter Complete details");
-            return;
-        } else {
-            props.addOrder({ address, firstName, lastName, postalCode });
+        if(showForm){
+            if (!cardDetails?.complete || !firstName || !address || !lastName || !postalCode ||!phonenumber) {
+                Alert.alert("Please enter Complete details");
+                return;
+            } else {
+                props.addOrder({ address, firstName, lastName, postalCode, phonenumber });
+            }
+        }else{
+            if (!cardDetails?.complete ) {
+                Alert.alert("Please enter Complete details");
+                return;
+            } else {
+                props.addOrder({ address, firstName, lastName, postalCode, phonenumber });
+            }
         }
+       
         const billingDetails = {
-            email: email,
+            firstName: firstName,
+            lastName: lastName,
+            postalCode: postalCode,
+            address: address,
+            phonenumber: phonenumber
         };
         try {
             const { clientSecret, error } = await fetchPaymentIntentClientSecret();
@@ -68,7 +85,8 @@ const PaymentScreen = (props) => {
     };
 
     return (
-        <ScrollView>
+             <KeyboardAwareScrollView
+        style={{height: '100%'}}>
             <View style={styles.container}>
                 <View style={{ height: 50 }}>
                     <Text style={{ fontSize: 20, color: '#000000' }}>   {`Total Amount: \u00A3 ${totalPrice}`} </Text>
@@ -80,7 +98,7 @@ const PaymentScreen = (props) => {
                     }}>
                         <TextInput
                             autoCapitalize="none"
-                            placeholder="firstName"
+                            placeholder="First Name"
                             keyboardType="default"
                             placeholderTextColor={'#1C2833'}
                             value={firstName}
@@ -88,7 +106,7 @@ const PaymentScreen = (props) => {
                             style={styles.input} />
                         <TextInput
                             autoCapitalize="none"
-                            placeholder="lastName"
+                            placeholder="Last Name"
                             keyboardType="default"
                             placeholderTextColor={'#1C2833'}
                             value={lastName}
@@ -96,7 +114,15 @@ const PaymentScreen = (props) => {
                             style={styles.input} />
                         <TextInput
                             autoCapitalize="none"
-                            placeholder="address"
+                            placeholder="Phone Number"
+                            keyboardType="default"
+                            placeholderTextColor={'#1C2833'}
+                            value={phonenumber}
+                            onChange={value => setPhonenumber(value.nativeEvent.text)}
+                            style={styles.input} />
+                        <TextInput
+                            autoCapitalize="none"
+                            placeholder="Address"
                             keyboardType="default"
                             placeholderTextColor={'#1C2833'}
                             value={address}
@@ -104,7 +130,7 @@ const PaymentScreen = (props) => {
                             style={styles.input} />
                         <TextInput
                             autoCapitalize="none"
-                            placeholder="postalCode"
+                            placeholder="Post Code"
                             keyboardType="default"
                             placeholderTextColor={'#1C2833'}
                             value={postalCode}
@@ -140,7 +166,7 @@ const PaymentScreen = (props) => {
                     </TouchableOpacity>
                 </View>
             </View>
-        </ScrollView>
+        </KeyboardAwareScrollView>
     );
 };
 export default PaymentScreen;
