@@ -38,6 +38,8 @@ const LoginScreen = () => {
 
   const handleSignUp = () => navigation.replace("Signup");
 
+  const handleHome = () => navigation.replace("Home");
+
   const openSocialMediaPlatform = async (url) => {
     const supported = await Linking.canOpenURL(url);
     (supported) && await Linking.openURL(url);
@@ -122,6 +124,11 @@ const LoginScreen = () => {
                       onPress={handleSignUp}
                       style={[button, buttonOutline]}>
                       <Text style={buttonOutlineText}>SIGNUP</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={handleHome}
+                      style={[button, buttonOutline]}>
+                      <Text style={buttonOutlineText}>Home</Text>
                     </TouchableOpacity>
                   </View>
 

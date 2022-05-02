@@ -17,12 +17,13 @@ function appReducer(state = initialState, action) {
                     email: action.payload.email,
                     phonenumber: action.payload.phonenumber ? action.payload.phonenumber : '',
                     address: action.payload.address ? action.payload.address : '',
+                    postalCode: action.payload.postal_code ? action.payload.postal_code : '',
                 } 
             }
         case "NOT_AUTHENTICATED":
             return { ...state, isAuthenticated: false, userDetails: null }
         case "RESET_AUTHENTICATION":
-            return { ...state, isAuthenticated: false, userDetails: null }
+            return { ...state, isAuthenticated: false, userDetails: null, cardItems: [] }
         case "SET_CARD_ITEM":
             if (state.cardItems.findIndex((item) => item.id == action.payload.id) == -1) {
                 return { ...state, cardItems: [...state.cardItems, action.payload] }

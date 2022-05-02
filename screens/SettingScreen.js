@@ -1,12 +1,15 @@
-import { useSelector } from 'react-redux';
-import React, { useEffect, useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/core'
-import { Image, StyleSheet, Text, TouchableOpacity, View, SafeAreaView } from 'react-native'
-import { Avatar, Button, Card, Title, Paragraph, Colors } from 'react-native-paper';
+import { Image, StyleSheet, Text, TouchableOpacity, View, SafeAreaView, Linking } from 'react-native'
+import { Card } from 'react-native-paper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
+
+const fbURL = 'https://www.facebook.com/groups/5092353437469549/?multi_permalinks=5140427655995460%2C5135247693180123%2C5129797220391837&notif_id=1649326578171979&notif_t=group_activity&ref=notif';
+const instagramURL = 'https://www.instagram.com/labdhivinay/';
 
 const SettingScreen = () => {
     const navigation = useNavigation();
+    const dispatch = useDispatch();
 
     const {
         socialMediaButtonContainer, socialMediaButtonView, socialMediaIcon,
@@ -14,17 +17,26 @@ const SettingScreen = () => {
 
     const isAuthenticated = useSelector((state) => state.isAuthenticated);
 
-    const handleSignOut = () => navigation.replace("Login");
+    const handleSignOut = () => {
+        dispatch({ type: 'RESET_AUTHENTICATION' });
+        navigation.replace("Login");
+    }
     const handleCart = () => navigation.push("Cart");
     const handleProfile = () => navigation.push("Profile");
     const handleOrder = () => navigation.push("Order");
     const handleLogin = () => navigation.push("Login");
+    const handleContactUs = () => navigation.push("ContactUs");
 
+
+  const openSocialMediaPlatform = async (url) => {
+    const supported = await Linking.canOpenURL(url);
+    (supported) && await Linking.openURL(url);
+  }
     return (
         <>
             <SafeAreaView />
             <View style={{ paddingBottom: 10 }}>
-                <Text style={{ fontSize: 25, fontWeight: 'bold' }}> Settings </Text>
+                <Text style={{ fontSize: 25, fontWeight: 'bold' }}> SETTINGS </Text>
             </View>
 
             <KeyboardAwareScrollView
@@ -32,7 +44,7 @@ const SettingScreen = () => {
                     flex: 1,
                 }} style={{ height: '100%' }}>
                 <View style={{ margin: 5 }}>
-                    {isAuthenticated && <View >
+                    <View >
                         <TouchableOpacity onPress={() => handleCart()}>
                             <Card style={{ backgroundColor: '#1C2833' }}>
                                 <View style={{ flexDirection: 'row', paddingLeft: 10, alignItems: 'center', paddingTop: 10, paddingBottom: 10 }}>
@@ -53,7 +65,7 @@ const SettingScreen = () => {
                                 </View>
                             </Card>
                         </TouchableOpacity>
-                    </View>}
+                    </View>
 
                     {isAuthenticated && <View style={{ marginTop: 10 }}>
                         <TouchableOpacity onPress={() => handleOrder()}>
@@ -102,7 +114,7 @@ const SettingScreen = () => {
                     </View>}
 
                     <View style={{ marginTop: 10 }}>
-                        <TouchableOpacity onPress={() => handleSignOut()}>
+                        <TouchableOpacity onPress={() => handleContactUs()}>
                             <Card style={{ backgroundColor: '#1C2833' }}>
                                 <View style={{ flexDirection: 'row', paddingLeft: 10, alignItems: 'center', paddingTop: 10, paddingBottom: 10 }}>
                                     <Image
@@ -196,31 +208,6 @@ const SettingScreen = () => {
                     </View>
                 </View>
             </KeyboardAwareScrollView>
-
-            {/* <View style={{
-                flexDirection: 'column', alignItems: 'center',
-                alignSelf: 'flex-end', justifyContent: 'space-between', marginBottom: 50
-            }}>
-                <Text style={{ fontSize: 14, fontWeight: 'bold' }}> Follow Us </Text>
-                <View style={socialMediaButtonContainer}>
-                    <View style={socialMediaButtonView}>
-                        <TouchableOpacity
-                            onPress={() => openSocialMediaPlatform(instagramURL)}>
-                            <Image
-                                source={require(`../assets/instagram.png`)}
-                                style={socialMediaIcon} />
-                        </TouchableOpacity>
-                    </View>
-                    <View style={socialMediaButtonView}>
-                        <TouchableOpacity
-                            onPress={() => openSocialMediaPlatform(fbURL)}>
-                            <Image
-                                source={require(`../assets/facebook.png`)}
-                                style={socialMediaIcon} />
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </View> */}
         </>
     );
 }

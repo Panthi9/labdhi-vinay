@@ -32,13 +32,14 @@ const ProfileScreen = () => {
     const handleBack = () => navigation.pop();
 
     const updateProfile = async (values) => {
-        const { firstName, lastName, email, phonenumber, address } = values;
+        const { firstName, lastName, email, phonenumber, address, postalCode } = values;
         let userProfileDetail = {
             first_name: firstName,
             last_name: lastName,
             email: email,
             phonenumber: phonenumber,
             address: address,
+            postal_code: postalCode,
         }
         await updateDoc(doc(db, 'users', userDetails.id), userProfileDetail);
         getUserByEmail(email);
@@ -91,6 +92,7 @@ const ProfileScreen = () => {
                             email: userDetails.email,
                             phonenumber: userDetails.phonenumber,
                             address: userDetails.address,
+                            postalCode: userDetails.postalCode,
                         }}
                         onSubmit={values => updateProfile(values)} >
                         {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => {
@@ -135,6 +137,16 @@ const ProfileScreen = () => {
                                                     onBlur={handleBlur('phonenumber')}
                                                     value={values.phonenumber}
                                                     style={[input, ((errors.phonenumber && touched.phonenumber) && inputError)]} />
+                                            </View>
+
+                                            <View style={textInputContainer}>
+                                                <TextInput
+                                                    placeholder="Address"
+                                                    placeholderTextColor={'#1C2833'}
+                                                    onChangeText={handleChange('address')}
+                                                    onBlur={handleBlur('address')}
+                                                    value={values.address}
+                                                    style={[input, ((errors.address && touched.address) && inputError)]} />
                                             </View>
 
                                             <View style={textInputContainer}>
@@ -226,6 +238,11 @@ const editProfileValidationSchema = yup.object().shape({
     address: yup
         .string()
         .required('Address is required'),
+    postalCode: yup
+        .string()
+        .max(10)
+        .min(10)
+        .required('Postal Code is required'),
     phonenumber: yup
         .string()
         .max(10)
